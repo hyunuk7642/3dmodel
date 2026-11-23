@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#141826">
+<title>3D 폰 — 켜고, 밀고, 던지기</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #141826; }
+  body {
+    font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+    color: #eef1f8; user-select: none; -webkit-user-select: none;
+  }
+  #stage { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; outline: none; }
+
+  #top {
+    position: fixed; top: 0; left: 0; right: 0; pointer-events: none;
+    padding: calc(14px + env(safe-area-inset-top)) 16px 0; text-align: center;
+  }
+  #hint {
+    display: inline-block; max-width: 100%; padding: 9px 16px; border-radius: 999px;
+    background: rgba(20, 24, 38, .72); border: 1px solid rgba(255, 255, 255, .12);
+    font-size: 15px; font-weight: 600; line-height: 1.35; text-wrap: balance; word-break: keep-all;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  }
+
+  #bar {
+    position: fixed; left: 0; right: 0; bottom: 0; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+    padding: 0 12px calc(14px + env(safe-area-inset-bottom));
+  }
+  #bar button {
+    appearance: none; font: inherit; font-size: 14px; font-weight: 700; color: #eef1f8; cursor: pointer;
+    min-height: 44px; padding: 0 16px; border-radius: 14px;
+    background: rgba(34, 40, 62, .82); border: 1px solid rgba(255, 255, 255, .14);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    touch-action: none; transition: transform .08s, background .15s;
+  }
+  #bar button:hover { background: rgba(52, 60, 92, .9); }
+  #bar button:active, #bar button.held { transform: scale(.95); background: rgba(74, 86, 130, .95); }
+  #bar button:focus-visible { outline: 2px solid #8fb8ff; outline-offset: 2px; }
+  #bar button.primary { background: rgba(70, 110, 220, .9); border-color: rgba(160, 190, 255, .5); }
+  #bar button.primary:hover { background: rgba(86, 128, 240, .95); }
+
+  /* 전원 버튼을 누르고 있는 동안 차오르는 고리 */
+  #ring {
+    --p: 0; position: fixed; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%;
+    pointer-events: none; opacity: 0; transition: opacity .12s;
+    background: conic-gradient(#8fb8ff calc(var(--p) * 1turn), rgba(255, 255, 255, .16) 0);
+    -webkit-mask: radial-gradient(circle, transparent 23px, #000 24px);
+            mask: radial-gradient(circle, transparent 23px, #000 24px);
+  }
+  #ring.on { opacity: 1; }
+
+  #fail { position: fixed; inset: 0; display: none; place-items: center; padding: 24px; text-align: center; line-height: 1.6; }
+</style>
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.js" } }
+</script>
+</head>
+<body>
+<canvas id="stage" tabindex="0" aria-label="3D 휴대폰. 전원 버튼을 길게 눌러 켜고, 화면을 밀고, 몸통을 잡아 던질 수 있습니다."></canvas>
+
+<div id="top"><div id="hint" role="status" aria-live="polite">오른쪽 옆면의 전원 버튼을 꾹 눌러 켜 보세요</div></div>
+
+<div id="bar">
+  <button id="btnPower" class="primary" type="button">⏻ 전원 (꾹)</button>
+  <button id="btnFlip" type="button">뒤집기</button>
+  <button id="btnThrow" type="button">던지기</button>
+  <button id="btnPick" type="button">집어 들기</button>
+  <button id="btnSound" type="button" aria-pressed="true">소리 켬</button>
+</div>
+
+<div id="ring"></div>
+<div id="fail">이 브라우저에서는 3D(WebGL)를 쓸 수 없어요.<br>다른 브라우저로 열어 주세요.</div>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
